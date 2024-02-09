@@ -1,0 +1,120 @@
+// Include the necessary library for motor control
+#include <Servo.h>
+
+//Motor pin definitions
+//every spark max also needs to be connected to ground in someway
+//needs to be a pwm pin
+#define MotorAlphaPin 9 // Pin connected to the motor controller's input
+#define MotorBravoPin 10
+#define MotorCharliePin 2
+#define MotorDeltaPin 12
+#define MotorEchoPin 13
+
+
+//arcade drive joystick #1. this is only for when using a joystick that plugs directly into the arduino/pi
+#define JOYSTICK_PIN_X A5
+#define JOYSTICK_PIN_Y A3
+
+
+// Create a servo object to control the brushless motor
+//defines the motor(need to use this with every .attach for example motorAlpha.attach)
+Servo MotorAlpha;
+Servo MotorBravo;
+Servo MotorCharlie;
+Servo MotorDelta;
+Servo MotorEcho;
+
+
+
+
+void setup() {
+  // Attach motor to the corresponding pin. Need to do this for every single motor
+  MotorAlpha.attach(MotorAlphaPin);
+  MotorBravo.attach(MotorBravoPin);
+
+  // Initialize serial communication
+  //this for  the serial monitor
+  Serial.begin(9600);
+}
+
+void loop() {
+
+
+ // Reading joystick values
+
+  int Joystick1X = analogRead(JOYSTICK_PIN_X); ///always going to be inbetween 0 and 1023 if using something that has more or less then need to convert to these values to work
+  int Joystick1Y = analogRead(JOYSTICK_PIN_Y); ///always going to be inbetween 0 and 1023
+
+  ////////////////////////////////
+  //////////////////// Serial print for monitor
+  Serial.print("Joystick X: ");
+  Serial.print(Joystick1X);
+  Serial.print("\tJoystick Y: ");
+  Serial.println(Joystick1Y);
+ 
+
+
+
+
+  ////////////////////overall values that will change everything
+  ///////////////////
+
+  //Stop value(DON"T CHANGE)
+  int StopMotorVal = 1500;
+  //deadzones and startzones
+  int highStartVal = 700;
+  int lowStartVal = 400;
+
+  //figuring out if motor move forward or backward depending on weather this value is positive or negative
+
+
+
+
+
+  /////////////////////////////
+  ////////////////////////////
+  /////////////////////////////
+  //////////////////////////MOTOR ALPHA
+  ////////////////////////////////////
+  /////////////////////////////////////
+
+
+//shoulder code (up/down both directions)
+
+
+  //specific values that can change
+  int AlphaMotorSpeed = 10;
+  int BravoMotorSpeed = 10;
+  
+  //figuring out if motor move forward or backward depending on weather this value is positive or negative
+  int AlphaMotorVal = (Joystick1X-512)/AlphaMotorSpeed ; //this value changes how fast or how slow the actual motor will move use the division number to change nothing else
+  int BravoMotorVal= (Joystick1X-512)/BravoMotorSpeed;  //makes this go opposite direction
+  
+  
+  //moving only x counter clockwise
+  if (Joystick1X > highStartVal) {
+      MotorAlpha.writeMicroseconds(StopMotorVal + AlphaMotorVal); // Adjust the value as needed for your motor and controller
+       MotorBravo.writeMicroseconds(StopMotorVal + BravoMotorVal );
+       int Joystick1X = analogRead(JOYSTICK_PIN_X); ///always going to be inbetween 0 and 1023 if using something that has more or less then need to convert to these values to work
+      int Joystick1Y = analogRead(JOYSTICK_PIN_Y); ///always going to be inbetween 0 and 1023
+    }
+  
+  //moving only x clockwise
+  else if (Joystick1X < lowStartVal){
+    MotorAlpha.writeMicroseconds(StopMotorVal + AlphaMotorVal); // Adjust the value as needed for your motor and controller
+    MotorBravo.writeMicroseconds(StopMotorVal + BravoMotorVal );
+   int Joystick1X = analogRead(JOYSTICK_PIN_X); ///always going to be inbetween 0 and 1023 if using something that has more or less then need to convert to these values to work
+    int Joystick1Y = analogRead(JOYSTICK_PIN_Y); ///always going to be inbetween 0 and 1023
+  }
+else {
+MotorAlpha.writeMicroseconds(StopMotorVal); // Adjust the value as needed for your motor and controller
+  MotorBravo.writeMicroseconds(StopMotorVal);
+}
+
+ }
+ 
+ 
+
+
+ 
+  
